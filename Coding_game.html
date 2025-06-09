@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Master Challenge 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: rainbow 3s ease-in-out infinite;
+        }
+
+        @keyframes rainbow {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(180deg); }
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .stat {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            padding: 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card:nth-child(2) {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }
+
+        .game-card:nth-child(3) {
+            background: linear-gradient(135deg, #45b7d1, #96c93d);
+        }
+
+        .game-card:nth-child(4) {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .game-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .game-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .game-screen {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        .question {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .option.correct {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.3);
+        }
+
+        .option.wrong {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        .back-btn, .next-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover, .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .coding-challenge {
+            background: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+        }
+
+        .code-input {
+            width: 100%;
+            height: 100px;
+            background: #2d2d2d;
+            color: #fff;
+            border: 2px solid #4ecdc4;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .result.success {
+            background: rgba(78, 205, 196, 0.3);
+            border: 2px solid #4ecdc4;
+            color: #4ecdc4;
+        }
+
+        .result.error {
+            background: rgba(255, 107, 107, 0.3);
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .memory-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .memory-card.flipped {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: #4ecdc4;
+        }
+
+        .memory-card.matched {
+            background: rgba(78, 205, 196, 0.5);
+            border-color: #4ecdc4;
+            cursor: default;
+        }
+
+        .leaderboard {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .leaderboard h3 {
+            color: #4ecdc4;
+            margin-bottom: 15px;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .menu {
+                grid-template-columns: 1fr;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">🎮 Code Master Challenge</h1>
+            <p class="subtitle">Test your coding skills with fun mini-games!</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="score">0</div>
+                <div>Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="streak">0</div>
+                <div>Streak</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="level">1</div>
+                <div>Level</div>
+            </div>
+        </div>
+
+        <div class="menu" id="main-menu">
+            <button class="game-card" onclick="startGame('quiz')">
+                <span class="game-icon">🧠</span>
+                <div class="game-title">Code Quiz</div>
+                <div class="game-description">Test your programming knowledge</div>
+            </button>
+            
+            <button class="game-card" onclick="startGame('debug')">
+                <span class="game-icon">🐛</span>
+                <div class="game-title">Bug Hunter</div>
+                <div class="game-description">Find and fix the bugs</div>
+            </button>
+            
+            <button class="game-card" onclick="startGame('memory')">
+                <span class="game-icon">🧩</span>
+                <div class="game-title">Code Memory</div>
+                <div class="game-description">Match programming concepts</div>
+            </button>
+            
+            <button class="game-card" onclick="startGame('speed')">
+                <span class="game-icon">⚡</span>
+                <div class="game-title">Speed Coding</div>
+                <div class="game-description">Code against the clock</div>
+            </button>
+        </div>
+
+        <!-- Quiz Game -->
+        <div class="game-screen" id="quiz-game">
+            <h2>🧠 Code Quiz Challenge</h2>
+            <div class="question" id="quiz-question"></div>
+            <div class="options" id="quiz-options"></div>
+            <button class="back-btn" onclick="showMenu()">Back to Menu</button>
+            <button class="next-btn" onclick="nextQuestion()" id="next-btn" style="display: none;">Next Question</button>
+        </div>
+
+        <!-- Debug Game -->
+        <div class="game-screen" id="debug-game">
+            <h2>🐛 Bug Hunter Challenge</h2>
+            <div class="coding-challenge" id="debug-code"></div>
+            <textarea class="code-input" id="debug-input" placeholder="Fix the bug and write the corrected code here..."></textarea>
+            <button class="next-btn" onclick="checkDebug()">Submit Fix</button>
+            <div class="result" id="debug-result"></div>
+            <button class="back-btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+
+        <!-- Memory Game -->
+        <div class="game-screen" id="memory-game">
+            <h2>🧩 Code Memory Challenge</h2>
+            <p style="color: white; margin-bottom: 20px;">Match the programming concepts!</p>
+            <div class="memory-game" id="memory-grid"></div>
+            <button class="back-btn" onclick="showMenu()">Back to Menu</button>
+            <button class="next-btn" onclick="resetMemory()">New Game</button>
+        </div>
+
+        <!-- Speed Coding Game -->
+        <div class="game-screen" id="speed-game">
+            <h2>⚡ Speed Coding Challenge</h2>
+            <div id="speed-timer" style="color: #4ecdc4; font-size: 1.5rem; margin: 20px 0;">Time: 60s</div>
+            <div class="question" id="speed-question"></div>
+            <textarea class="code-input" id="speed-input" placeholder="Write your code here..."></textarea>
+            <button class="next-btn" onclick="submitSpeed()">Submit Code</button>
+            <div class="result" id="speed-result"></div>
+            <button class="back-btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+
+        <div class="leaderboard">
+            <h3>🏆 Your Best Scores</h3>
+            <div class="leaderboard-entry">
+                <span>Quiz Master</span>
+                <span id="quiz-best">0</span>
+            </div>
+            <div class="leaderboard-entry">
+                <span>Bug Hunter</span>
+                <span id="debug-best">0</span>
+            </div>
+            <div class="leaderboard-entry">
+                <span>Memory Champion</span>
+                <span id="memory-best">0</span>
+            </div>
+            <div class="leaderboard-entry">
+                <span>Speed Demon</span>
+                <span id="speed-best">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            score: 0,
+            streak: 0,
+            level: 1,
+            currentGame: null,
+            currentQuestion: 0
+        };
+
+        const quizQuestions = [
+            {
+                question: "What does 'HTML' stand for?",
+                options: ["Hypertext Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlink Text Markup Language"],
+                correct: 0
+            },
+            {
+                question: "Which of these is NOT a JavaScript data type?",
+                options: ["String", "Boolean", "Integer", "Undefined"],
+                correct: 2
+            },
+            {
+                question: "What is the time complexity of binary search?",
+                options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+                correct: 1
+            },
+            {
+                question: "Which CSS property is used to change text color?",
+                options: ["text-color", "font-color", "color", "text-style"],
+                correct: 2
+            },
+            {
+                question: "What does 'API' stand for?",
+                options: ["Application Programming Interface", "Advanced Programming Interface", "Automated Programming Interface", "Application Process Interface"],
+                correct: 0
+            }
+        ];
+
+        const debugChallenges = [
+            {
+                code: `function addNumbers(a, b) {
+    return a + b;
+}
+console.log(addNumbers(5, "3"));`,
+                solution: `function addNumbers(a, b) {
+    return Number(a) + Number(b);
+}
+console.log(addNumbers(5, "3"));`,
+                explanation: "Convert strings to numbers before addition"
+            },
+            {
+                code: `for (let i = 0; i <= 5; i++) {
+    console.log(i);
+}`,
+                solution: `for (let i = 0; i < 5; i++) {
+    console.log(i);
+}`,
+                explanation: "Loop condition should be < 5 to avoid printing 5"
+            }
+        ];
+
+        const memoryCards = [
+            '🐍', '🐍', '☕', '☕', '⚛️', '⚛️', '🔧', '🔧',
+            '🎨', '🎨', '🚀', '🚀', '💾', '💾', '🌐', '🌐'
+        ];
+
+        const speedChallenges = [
+            {
+                question: "Write a function that returns the sum of two numbers:",
+                solution: "function sum(a, b) { return a + b; }"
+            },
+            {
+                question: "Create an array with numbers 1 to 5:",
+                solution: "[1, 2, 3, 4, 5]"
+            }
+        ];
+
+        function updateStats() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('streak').textContent = gameState.streak;
+            document.getElementById('level').textContent = gameState.level;
+        }
+
+        function showMenu() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('main-menu').style.display = 'grid';
+        }
+
+        function startGame(gameType) {
+            document.getElementById('main-menu').style.display = 'none';
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            gameState.currentGame = gameType;
+            
+            switch(gameType) {
+                case 'quiz':
+                    startQuiz();
+                    break;
+                case 'debug':
+                    startDebug();
+                    break;
+                case 'memory':
+                    startMemory();
+                    break;
+                case 'speed':
+                    startSpeed();
+                    break;
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-game').classList.add('active');
+            gameState.currentQuestion = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            const question = quizQuestions[gameState.currentQuestion];
+            document.getElementById('quiz-question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index, question.correct);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function selectOption(selected, correct) {
+            const options = document.querySelectorAll('#quiz-options .option');
+            options.forEach((option, index) => {
+                if (index === correct) {
+                    option.classList.add('correct');
+                } else if (index === selected && selected !== correct) {
+                    option.classList.add('wrong');
+                }
+                option.onclick = null;
+            });
+            
+            if (selected === correct) {
+                gameState.score += 10;
+                gameState.streak++;
+            } else {
+                gameState.streak = 0;
+            }
+            
+            updateStats();
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestion++;
+            if (gameState.currentQuestion < quizQuestions.length) {
+                showQuizQuestion();
+            } else {
+                alert(`Quiz completed! Final score: ${gameState.score}`);
+                showMenu();
+            }
+        }
+
+        function startDebug() {
+            document.getElementById('debug-game').classList.add('active');
+            const challenge = debugChallenges[Math.floor(Math.random() * debugChallenges.length)];
+            document.getElementById('debug-code').textContent = challenge.code;
+            document.getElementById('debug-input').value = '';
+            document.getElementById('debug-result').innerHTML = '';
+            gameState.currentChallenge = challenge;
+        }
+
+        function checkDebug() {
+            const userCode = document.getElementById('debug-input').value.trim();
+            const result = document.getElementById('debug-result');
+            
+            if (userCode.includes('Number(') || userCode.includes('parseInt(') || userCode.includes('< 5')) {
+                result.className = 'result success';
+                result.innerHTML = `✅ Correct! ${gameState.currentChallenge.explanation}`;
+                gameState.score += 20;
+                gameState.streak++;
+            } else {
+                result.className = 'result error';
+                result.innerHTML = `❌ Not quite right. Hint: ${gameState.currentChallenge.explanation}`;
+                gameState.streak = 0;
+            }
+            
+            updateStats();
+        }
+
+        function startMemory() {
+            document.getElementById('memory-game').classList.add('active');
+            createMemoryGrid();
+        }
+
+        function createMemoryGrid() {
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            
+            const shuffledCards = [...memoryCards].sort(() => Math.random() - 0.5);
+            
+            shuffledCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'memory-card';
+                cardElement.dataset.card = card;
+                cardElement.dataset.index = index;
+                cardElement.onclick = () => flipCard(cardElement);
+                grid.appendChild(cardElement);
+            });
+            
+            gameState.memoryState = {
+                flippedCards: [],
+                matchedPairs: 0,
+                moves: 0
+            };
+        }
+
+        function flipCard(card) {
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            if (gameState.memoryState.flippedCards.length >= 2) return;
+            
+            card.classList.add('flipped');
+            card.textContent = card.dataset.card;
+            gameState.memoryState.flippedCards.push(card);
+            
+            if (gameState.memoryState.flippedCards.length === 2) {
+                gameState.memoryState.moves++;
+                setTimeout(checkMemoryMatch, 1000);
+            }
+        }
+
+        function checkMemoryMatch() {
+            const [card1, card2] = gameState.memoryState.flippedCards;
+            
+            if (card1.dataset.card === card2.dataset.card) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                gameState.memoryState.matchedPairs++;
+                gameState.score += 15;
+                gameState.streak++;
+                
+                if (gameState.memoryState.matchedPairs === 8) {
+                    setTimeout(() => {
+                        alert(`Memory game completed! Moves: ${gameState.memoryState.moves}`);
+                    }, 500);
+                }
+            } else {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                card1.textContent = '';
+                card2.textContent = '';
+                gameState.streak = 0;
+            }
+            
+            gameState.memoryState.flippedCards = [];
+            updateStats();
+        }
+
+        function resetMemory() {
+            createMemoryGrid();
+        }
+
+        function startSpeed() {
+            document.getElementById('speed-game').classList.add('active');
+            const challenge = speedChallenges[Math.floor(Math.random() * speedChallenges.length)];
+            document.getElementById('speed-question').textContent = challenge.question;
+            document.getElementById('speed-input').value = '';
+            document.getElementById('speed-result').innerHTML = '';
+            gameState.currentSpeedChallenge = challenge;
+            
+            let timeLeft = 60;
+            const timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('speed-timer').textContent = `Time: ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('speed-result').innerHTML = '<div class="result error">⏰ Time\'s up!</div>';
+                }
+            }, 1000);
+            
+            gameState.speedTimer = timer;
+        }
+
+        function submitSpeed() {
+            const userCode = document.getElementById('speed-input').value.trim();
+            const result = document.getElementById('speed-result');
+            
+            if (userCode.toLowerCase().includes('function') || userCode.includes('[1,') || userCode.includes('[1, 2, 3, 4, 5]')) {
+                result.className = 'result success';
+                result.innerHTML = '🎉 Excellent! Fast and correct!';
+                gameState.score += 25;
+                gameState.streak++;
+            } else {
+                result.className = 'result error';
+                result.innerHTML = '❌ Not quite right. Keep trying!';
+                gameState.streak = 0;
+            }
+            
+            clearInterval(gameState.speedTimer);
+            updateStats();
+        }
+
+        // Initialize the game
+        updateStats();
+    </script>
+</body>
+</html>
