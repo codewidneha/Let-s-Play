@@ -4,14 +4,6 @@ Want to test your coding skills? Try my interactive game!
 
 
 [![Play Game](https://img.shields.io/badge/🎮_Play_Game-4ecdc4?style=for-the-badge&logo=gamepad&logoColor=white)](http://127.0.0.1:5500/Coding_game.html)
-<div align="center">
-  <img src="https://pplx-res.cloudinary.com/image/private/user_uploads/71184525/8dced957-1797-414e-9c52-03e652a5a8d4/generated-image.jpg" width="600" alt="Programming Challenges Cat Keyboard Banner">
-
-  <h1>🚀 Welcome to Programming Challenges! 🚀</h1>
-  <p>
-    <b>Sharpen your skills and have fun with:</b>
-  </p>
-</div>
   
 <div align="center">
   <img src="https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif" width="400" alt="Animated Cat Programming">
